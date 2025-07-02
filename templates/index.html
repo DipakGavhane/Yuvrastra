@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUVRASTRA - Agro Solutions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+  <!-- ==========================================================================
+       HEADER SECTION
+       ========================================================================== -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo-wrapper">
+          <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="logo-small">
+          <h1 class="company-name">YUVRASTRA</h1>
+        </div>
+        <nav class="main-nav">
+          <a href="#features" class="nav-link">Features</a>
+          <a href="#team" class="nav-link">Our Team</a>
+          <a href="#products" class="nav-link">Products</a>
+          <a href="#contact" class="nav-link">Contact</a>
+          <a href="login.html" class="login-btn">Login</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       HERO SECTION
+       ========================================================================== -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-header">
+        <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="hero-logo">
+        <h1 class="hero-title">YUVRASTRA</h1>
+      </div>
+      
+      <h2 class="hero-slogan">जय जवान जय किसान</h2>
+      
+      <p class="hero-subtitle">
+        Empowering agriculture with modern, sustainable, and premium solutions.
+      </p>
+      
+      <div class="achievement-image">
+        <img src="{{ url_for('static', filename='images/Screenshot 2024-07-05 214922.png') }}" alt="Our Achievements">
+        <div class="achievement-caption">Our Achievements</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       FEATURES SECTION
+       ========================================================================== -->
+  <section class="section" id="features">
+    <h2 class="section-title">Features</h2>
+    <div class="card-grid">
+      <div class="card">
+        <img src="images/feature1.jpg" alt="Smart Technology">
+        <h3 class="card-title">Smart Technology</h3>
+        <p class="card-text">Innovative agro-tech solutions for modern farming needs.</p>
+      </div>
+      <div class="card">
+        <img src="images/feature2.jpg" alt="Eco-Friendly">
+        <h3 class="card-title">Eco-Friendly</h3>
+        <p class="card-text">Environmentally responsible and sustainable practices.</p>
+      </div>
+      <div class="card">
+        <img src="images/feature3.jpg" alt="24x7 Support">
+        <h3 class="card-title">24x7 Support</h3>
+        <p class="card-text">Expert assistance available anytime for farmers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       TEAM SECTION
+       ========================================================================== -->
+  <section class="section" id="team">
+    <h2 class="section-title">Our Team</h2>
+    <div class="card-grid">
+      
+      <!-- Team Member 1: Yuvraj -->
+      <div class="card team-card">
+        <img src="{{ url_for('static', filename='images/IMG_0112.JPG') }}" alt="Yuvraj Pramod Ghugare" class="team-avatar">
+        <h3 class="team-name">Yuvraj Pramod Ghugare</h3>
+        <p class="team-role">Founder & CEO</p>
+        <button class="card-btn" onclick="toggleBio('yuvraj-bio')">More Info</button>
+        
+        <div id="yuvraj-bio" class="bio-section">
+          <p><strong>Founder & CEO – YUVRASTRA - Agro Solution</strong></p>
+          <p>Yuvraj Ghugare is the 18-year-old Founder & CEO of YUVRASTRA - Agro Solution, a rising agro-tech brand dedicated to delivering innovative and practical solutions for the farming community. With a strong vision to modernize agriculture and support farmers across India, Yuvraj brings youthful energy, leadership, and a deep-rooted passion for rural development. His dedication to empowering farmers through quality and service continues to drive the company forward.</p>
+        </div>
+        
+        <div class="social-links">
+          <a href="mailto:yuvrastra@gmail.com" target="_blank" title="Email">
+            <i class="fas fa-envelope social-icon"></i>
+          </a>
+          <a href="https://www.instagram.com/pilot_yuvraj123" target="_blank" title="Instagram">
+            <i class="fab fa-instagram social-icon"></i>
+          </a>
+          <a href="https://www.facebook.com/yourprofile" target="_blank" title="Facebook">
+            <i class="fab fa-facebook-f social-icon"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/yourprofile" target="_blank" title="LinkedIn">
+            <i class="fab fa-linkedin-in social-icon"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Team Member 2: Sandhya -->
+      <div class="card team-card">
+        <img src="{{ url_for('static', filename='images/IMG_9440.jpg') }}" alt="Sandhya Ghugare" class="team-avatar">
+        <h3 class="team-name">Sandhya Ghugare</h3>
+        <p class="team-role">Co-Founder</p>
+        <button class="card-btn" onclick="toggleBio('sandhya-bio')">More Info</button>
+        
+        <div id="sandhya-bio" class="bio-section">
+          <p><strong>Co-Founder – YUVRASTRA - Agro Solution</strong></p>
+          <p>Hello, I am here!</p>
+        </div>
+        
+        <div class="social-links">
+          <a href="mailto:yuvrastra@gmail.com" target="_blank" title="Email">
+            <i class="fas fa-envelope social-icon"></i>
+          </a>
+          <a href="https://www.instagram.com/pilot_yuvraj123" target="_blank" title="Instagram">
+            <i class="fab fa-instagram social-icon"></i>
+          </a>
+          <a href="https://www.facebook.com/yourprofile" target="_blank" title="Facebook">
+            <i class="fab fa-facebook-f social-icon"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/yourprofile" target="_blank" title="LinkedIn">
+            <i class="fab fa-linkedin-in social-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       PRODUCTS SECTION
+       ========================================================================== -->
+  <section class="section" id="products">
+    <h2 class="section-title">Products</h2>
+    <div class="card-grid">
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="Organic Fertilizer">
+        <h3 class="card-title">Organic Fertilizer</h3>
+        <p class="card-text">Boost soil fertility naturally.</p>
+        <a href="product1.html" class="card-btn">More Info</a>
+      </div>
+      <div class="card">
+        <img src="{{ url_for('static', filename='images/pro.png') }}" alt="Hybrid Seeds">
+        <h3 class="card-title">Hybrid Seeds</h3>
+        <p class="card-text">High-yield seeds for diverse climates.</p>
+        <a href="product2.html" class="card-btn">More Info</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       GALLERY SECTION
+       ========================================================================== -->
+  <section class="section" id="gallery">
+    <h2 class="section-title">Gallery</h2>
+    
+    <div class="gallery-container">
+      <button class="gallery-arrow left" onclick="prevSlide()">&#10094;</button>
+      
+      <div class="gallery-slider" id="gallerySlider">
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="{{ url_for('static', filename='images/IMG_0112.JPG') }}" alt="CEO at Event">
+          <div class="gallery-desc">CEO at Event</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="{{ url_for('static', filename='images/IMG_9440.jpg') }}" alt="Team at Work">
+          <div class="gallery-desc">Team at Work</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="{{ url_for('static', filename='images/pro.png') }}" alt="Product Showcase">
+          <div class="gallery-desc">Product Showcase</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="Yuvrastra Logo">
+          <div class="gallery-desc">Yuvrastra Logo</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="images/feature1.jpg" alt="Smart Farming">
+          <div class="gallery-desc">Smart Farming</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="images/feature2.jpg" alt="Eco-Friendly Practice">
+          <div class="gallery-desc">Eco-Friendly Practice</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="images/feature3.jpg" alt="24x7 Farmer Support">
+          <div class="gallery-desc">24x7 Farmer Support</div>
+        </div>
+        <div class="gallery-item" onclick="openPopup(this)">
+          <img src="{{ url_for('static', filename='images/Screenshot 2024-07-05 214922.png') }}" alt="Achievements">
+          <div class="gallery-desc">Achievements</div>
+        </div>
+      </div>
+      
+      <button class="gallery-arrow right" onclick="nextSlide()">&#10095;</button>
+    </div>
+
+    <!-- Gallery Popup Modal -->
+    <div class="image-popup" id="imagePopup">
+      <span class="close-popup" onclick="closePopup()">&times;</span>
+      <img id="popupImg" src="" alt="" class="popup-image">
+      <div class="popup-description" id="popupDesc"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       CONTACT SECTION
+       ========================================================================== -->
+  <section class="section contact-section" id="contact">
+    <h2 class="contact-title">Contact Us</h2>
+    
+    <div class="contact-icons">
+      <a href="mailto:yuvrastra@gmail.com" target="_blank" class="contact-icon email" title="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+      <a href="tel:+918261800991" target="_blank" class="contact-icon phone" title="Call">
+        <i class="fas fa-phone-alt"></i>
+      </a>
+      <a href="https://www.instagram.com/pilot_yuvraj123" target="_blank" class="contact-icon instagram" title="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://www.facebook.com/yourprofile" target="_blank" class="contact-icon facebook" title="Facebook">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="contact-icon linkedin" title="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+      <a href="https://wa.me/918261800991" target="_blank" class="contact-icon whatsapp" title="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       FLOATING WHATSAPP BUTTON
+       ========================================================================== -->
+  <a href="https://wa.me/918261800991" class="whatsapp-float" target="_blank" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 class="footer-title">YUVRASTRA - Agro Solution</h3>
+      <p class="footer-tagline">Empowering Indian Farmers with Innovative Agro Products</p>
+      <p class="footer-copyright">© 2025 YUVRASTRA. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       JAVASCRIPT
+       ========================================================================== */
+  <script>
+    // Team bio toggle functionality
+    function toggleBio(bioId) {
+      const bio = document.getElementById(bioId);
+      if (bio.style.display === 'none' || bio.style.display === '') {
+        bio.style.display = 'block';
+      } else {
+        bio.style.display = 'none';
+      }
+    }
+
+    // Gallery functionality
+    let currentIndex = 0;
+
+    function updateSlider() {
+      const slider = document.getElementById('gallerySlider');
+      const itemWidth = slider.children[0].offsetWidth + 20;
+      const offset = -currentIndex * itemWidth;
+      slider.style.transform = `translateX(${offset}px)`;
+    }
+
+    function nextSlide() {
+      const slider = document.getElementById('gallerySlider');
+      if (currentIndex < slider.children.length - 3) {
+        currentIndex++;
+      } else {
+        currentIndex = 0; // Loop back to

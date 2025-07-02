@@ -1,0 +1,593 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+    /* ==========================================================================
+       GLOBAL STYLES
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #e8f5e9, #ffffff);
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       HEADER STYLES
+       ========================================================================== */
+    header {
+      background: linear-gradient(to right, #00695c, #004d40);
+      color: #fff;
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-small {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 16px rgba(255, 0, 0, 0.15);
+    }
+
+    .logo-small:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 24px rgba(0, 128, 0, 0.3);
+    }
+
+    .company-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .main-nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      font-weight: 600;
+      transition: color 0.3s;
+      padding: 8px 12px;
+    }
+
+    .nav-link:hover {
+      color: #b2dfdb;
+    }
+
+    .login-btn {
+      background-color: hsla(122, 100%, 46%, 0.92);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .login-btn:hover {
+      background-color: hsla(122, 100%, 40%, 0.92);
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .hero {
+      background: linear-gradient(to right, #004d40, #00695c);
+      color: #fff;
+      text-align: center;
+      padding: 50px 20px;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .hero-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .hero-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      margin: 0;
+    }
+
+    .hero-slogan {
+      font-size: 3.8rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0;
+    }
+
+    .achievement-image {
+      position: relative;
+      max-width: 400px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+      transition: transform 0.3s ease;
+    }
+
+    .achievement-image:hover {
+      transform: scale(1.02);
+    }
+
+    .achievement-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .achievement-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-size: 1rem;
+      padding: 8px;
+      text-align: center;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+
+    /* ==========================================================================
+       SECTION STYLES
+       ========================================================================== */
+    .section {
+      padding: 60px 20px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #00796b;
+      margin-bottom: 40px;
+    }
+
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       CARD STYLES
+       ========================================================================== */
+    .card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      color: #004d40;
+    }
+
+    .card-text {
+      color: #616161;
+      margin-bottom: 15px;
+    }
+
+    .card-btn {
+      display: inline-block;
+      background-color: #00796b;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card-btn:hover {
+      background-color: hsl(170, 100%, 15%);
+    }
+
+    /* ==========================================================================
+       TEAM SECTION SPECIFIC STYLES
+       ========================================================================== */
+    .team-card {
+      width: 300px;
+      text-align: center;
+      padding: 20px;
+      transition: all 0.4s ease;
+    }
+
+    .team-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 4px solid #4CAF50;
+    }
+
+    .team-name {
+      font-size: 1.2rem;
+      color: #004d40;
+      margin-bottom: 5px;
+    }
+
+    .team-role {
+      color: #616161;
+      margin-bottom: 15px;
+    }
+
+    .bio-section {
+      display: none;
+      margin-top: 15px;
+      text-align: left;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .social-icon {
+      font-size: 20px;
+      color: #00796b;
+      transition: color 0.3s ease;
+    }
+
+    .social-icon:hover {
+      color: #4CAF50;
+    }
+
+    /* ==========================================================================
+       GALLERY STYLES
+       ========================================================================== */
+    .gallery-container {
+      position: relative;
+      max-width: 1000px;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    .gallery-slider {
+      display: flex;
+      transition: transform 0.5s ease;
+      gap: 20px;
+    }
+
+    .gallery-item {
+      position: relative;
+      flex: 0 0 calc(33.333% - 20px);
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-desc {
+      display: none;
+    }
+
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      font-size: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 2;
+      transition: background-color 0.3s;
+    }
+
+    .gallery-arrow:hover {
+      background-color: #004d40;
+    }
+
+    .gallery-arrow.left {
+      left: 10px;
+    }
+
+    .gallery-arrow.right {
+      right: 10px;
+    }
+
+    /* Gallery Popup */
+    .image-popup {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .popup-image {
+      max-width: 80%;
+      max-height: 70vh;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .popup-description {
+      margin-top: 12px;
+      background: hsla(120, 1%, 16%, 0.8);
+      color: white;
+      padding: 8px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      max-width: 80%;
+    }
+
+    .close-popup {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       CONTACT SECTION
+       ========================================================================== */
+    .contact-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #f5f5f5, #e0f7e9);
+      border-top: 4px solid #4CAF50;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .contact-title {
+      font-size: 2.5rem;
+      color: #2e7d32;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    .contact-icons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .contact-icon {
+      color: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-icon:hover {
+      transform: scale(1.2);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Contact icon colors */
+    .contact-icon.email { background-color: #D44638; }
+    .contact-icon.phone { background-color: #007BFF; }
+    .contact-icon.instagram { background-color: #E4405F; }
+    .contact-icon.facebook { background-color: #3b5998; }
+    .contact-icon.linkedin { background-color: #0e76a8; }
+    .contact-icon.whatsapp { background-color: #25D366; }
+
+    /* ==========================================================================
+       FLOATING ELEMENTS
+       ========================================================================== */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background-color: #25D366;
+      color: white;
+      font-size: 24px;
+      padding: 18px;
+      border-radius: 50%;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      animation: pulseWhatsapp 1.8s infinite;
+      transition: transform 0.3s;
+    }
+
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .footer {
+      background-color: #004d40;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .footer-title {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+    }
+
+    .footer-tagline {
+      margin: 0 0 10px;
+    }
+
+    .footer-copyright {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    /* ==========================================================================
+       ANIMATIONS
+       ========================================================================== */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulseWhatsapp {
+      0% { box-shadow: 0 0 0 0 #25D366b3; }
+      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    /* ==========================================================================
+       RESPONSIVE DESIGN
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .main-nav {
+        justify-content: center;
+      }
+
+      .hero-header {
+        flex-direction: column;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .hero-slogan {
+        font-size: 2.5rem;
+      }
+
+      .gallery-item {
+        flex: 0 0 80%;
+      }
+
+      .card-grid {
+        justify-content: center;
+      }
+
+      .card {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-slogan {
+        font-size: 2rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .contact-title {
+        font-size: 2rem;
+      }
+    }
