@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YUVRASTRA - Agro Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .login-page {
+            background: linear-gradient(to bottom, #e8f5e9, #ffffff);
+            display: flex;
+            font-family: Arial, sans-serif;
+
+            text-align: center;
+            margin: 0;
+            height: 80vh;
+            /* padding: 0px 12px 0; */
+            flex-direction: column;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .login-page h1 {
+            margin-bottom: 30px;
+        }
+        .login-page .login-option {
+            background: #fff;
+            padding: 20px;
+            margin: 0 auto;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .login-page .login-option a.button {
+            display: block;
+            margin: 10px 0;
+            padding: 12px;
+            background: #4285F4;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .login-page .login-option a.button.phone {
+            background: #34A853;
+        }
+        .login-page .guest-button-container {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+        }
+        .login-page .guest-button-container a.button.guest {
+            background: #888;
+            width: 200px;
+            margin: 0 auto;
+            padding: 12px;
+            display: block;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    {% include "header.html" %}
+
+    <div class="login-page">
+        <h1>Login to Continue</h1>
+
+        <div class="login-option">
+            <a href="{{ url_for('google_login') }}" class="button google">Continue with Google</a>
+            <a href="{{ url_for('phone_login') }}" class="button phone">Continue with Phone OTP</a>
+        </div>
+
+        <div class="guest-button-container">
+            <a href="{{ url_for('guest_login') }}" class="button guest">Continue as Guest</a>
+        </div>
+    </div>
+
+</body>
+</html>

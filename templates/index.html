@@ -10,26 +10,7 @@
 </head>
 
 <body>
-  <!-- ==========================================================================
-       HEADER SECTION
-       ========================================================================== -->
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo-wrapper">
-          <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="logo-small">
-          <h1 class="company-name">YUVRASTRA</h1>
-        </div>
-        <nav class="main-nav">
-          <a href="#features" class="nav-link">Features</a>
-          <a href="#team" class="nav-link">Our Team</a>
-          <a href="#products" class="nav-link">Products</a>
-          <a href="#contact" class="nav-link">Contact</a>
-          <a href="login.html" class="login-btn">Login</a>
-        </nav>
-      </div>
-    </div>
-  </header>
+   {% include "header.html" %}
 
   <!-- ==========================================================================
        HERO SECTION

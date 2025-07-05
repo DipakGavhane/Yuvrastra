@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Login - YUVRASTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .auth-title {
+            color: #2e7d32;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .phone-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .phone-input:focus {
+            outline: none;
+            border-color: #4285F4;
+        }
+        .send-otp-btn, .verify-btn, .resend-btn {
+            background: #34A853;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .send-otp-btn:hover, .verify-btn:hover {
+            background: #2d8f3f;
+        }
+        .resend-btn {
+            background: #ffa726;
+            font-size: 14px;
+            padding: 8px 20px;
+        }
+        .resend-btn:hover {
+            background: #ff9800;
+        }
+        .back-link {
+            color: #666;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #2e7d32;
+        }
+        .otp-section {
+            display: none;
+        }
+        .info-text {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        #recaptcha-container {
+            margin: 20px 0;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #34A853;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="auth-container">
+        <h2 class="auth-title">Phone Verification</h2>
+
+        <!-- Phone Number Input Section -->
+        <div id="phone-input-section">
+            <div class="input-group">
+                <label for="phone-number">Phone Number</label>
+                <input type="tel" id="phone-number" class="phone-input"
+                       placeholder="Enter your phone number (e.g., 9876543210)"
+                       pattern="[0-9]{10}" required>
+            </div>
+            <p class="info-text">We'll send you an OTP to verify your phone number</p>
+
+            <div id="recaptcha-container"></div>
+
+            <button class="send-otp-btn" onclick="signInWithPhone()">
+                <i class="fas fa-paper-plane"></i> Send OTP
+            </button>
+        </div>
+
+        <!-- OTP Input Section -->
+        <div id="otp-input-section" class="otp-section">
+            <div class="input-group">
+                <label for="otp-input">Enter OTP</label>
+                <input type="text" id="otp-input" class="phone-input"
+                       placeholder="Enter 6-digit OTP"
+                       pattern="[0-9]{6}" maxlength="6" required>
+            </div>
+            <p class="info-text">Enter the OTP sent to your phone number</p>
+
+            <button class="verify-btn" onclick="verifyOTP()">
+                <i class="fas fa-check"></i> Verify OTP
+            </button>
+
+            <button class="resend-btn" onclick="resendOTP()">
+                <i class="fas fa-redo"></i> Resend OTP
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <a href="{{ url_for('choose_login') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to login options
+        </a>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "{{ firebase_api_key }}",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Initialize reCAPTCHA
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
+            'callback': function(response) {
+                console.log('reCAPTCHA solved');
+            }
+        });
+
+        function signInWithPhone() {
+            const phoneNumber = document.getElementById('phone-number').value;
+            const appVerifier = window.recaptchaVerifier;
+
+            if (!phoneNumber) {
+                alert('Please enter a phone number');
+                return;
+            }
+
+            // Validate phone number format
+            if (!/^[0-9]{10}$/.test(phoneNumber)) {
+                alert('Please enter a valid 10-digit phone number');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+
+            // Add country code for India
+            const formattedPhone = '+91' + phoneNumber;
+
+            auth.signInWithPhoneNumber(formattedPhone, appVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    document.getElementById('phone-input-section').style.display = 'none';
+                    document.getElementById('otp-input-section').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch((error) => {
+                    console.error('Error during phone authentication:', error);
+                    alert('Failed to send OTP: ' + error.message);
+                    document.getElementById('loading').style.display = 'none';
+
+                    // Reset reCAPTCHA
+                    window.recaptchaVerifier.render().then(function(widgetId) {
+                        grecaptcha.reset(widgetId);
+                    });
+                });
+        }
+
+        function verifyOTP() {
+            const otp = document.getElementById('otp-input').value;
+
+            if (!otp) {
+                alert('Please enter the OTP');
+                return;
+            }
+
+            if (!/^[0-9]{6}$/.test(otp)) {
+                alert('Please enter a valid 6-digit OTP');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+
+            window.confirmationResult.confirm(otp)
+                .then((result) => {
+                    const user = result.user;
+                    return user.getIdToken();
+                })
+                .then((idToken) => {
+                    return fetch('/auth/phone/callback', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            idToken: idToken
+                        })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert('Authentication failed: ' + data.error);
+                        document.getElementById('loading').style.display = 'none';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Invalid OTP. Please try again.');
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
+
+        function resendOTP() {
+            const phoneNumber = document.getElementById('phone-number').value;
+            const formattedPhone = '+91' + phoneNumber;
+
+            document.getElementById('loading').style.display = 'block';
+
+            auth.signInWithPhoneNumber(formattedPhone, window.recaptchaVerifier)
+                .then((confirmationResult) => {
+                    window.confirmationResult = confirmationResult;
+                    alert('OTP resent successfully');
+                    document.getElementById('loading').style.display = 'none';
+                })
+                .catch((error) => {
+                    console.error('Error resending OTP:', error);
+                    alert('Failed to resend OTP: ' + error.message);
+                    document.getElementById('loading').style.display = 'none';
+                });
+        }
+    </script>
+</body>
+</html>

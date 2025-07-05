@@ -1,0 +1,17 @@
+# Flask + Python
+__pycache__/
+*.pyc
+
+# virtual environment
+venv/
+env/
+
+# environment variables
+.env
+
+# Firebase secrets
+serviceAccountKey.json
+
+# IDE metadata (optional)
+.idea/
+
