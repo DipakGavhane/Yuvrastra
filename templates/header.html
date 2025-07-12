@@ -1,20 +1,241 @@
-  <!-- ==========================================================================
-       HEADER SECTION
-       ========================================================================== -->
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo-wrapper">
-          <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="logo-small">
-          <h1 class="company-name">YUVRASTRA</h1>
-        </div>
-        <nav class="main-nav">
-          <a href="#features" class="nav-link">Features</a>
-          <a href="#team" class="nav-link">Our Team</a>
-          <a href="#products" class="nav-link">Products</a>
-          <a href="#contact" class="nav-link">Contact</a>
-          <a href="{{ url_for('choose_login') }}" class="login-btn">Login</a>
-        </nav>
+<!-- ==========================================================================
+     HEADER SECTION
+     ========================================================================== -->
+<header>
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-wrapper">
+        <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="logo-small">
+        <h1 class="company-name">YUVRASTRA</h1>
       </div>
+      <nav class="main-nav">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#team" class="nav-link">Our Team</a>
+        <a href="#products" class="nav-link">Products</a>
+        <a href="#contact" class="nav-link">Contact</a>
+
+        {% if session.user %}
+          <!-- User is logged in -->
+          <div class="user-menu">
+            <div class="user-info">
+              {% if session.user.photo_url %}
+                <img src="{{ session.user.photo_url }}" alt="User Avatar" class="user-avatar">
+              {% else %}
+                <div class="user-avatar-placeholder">
+                  <i class="fas fa-user"></i>
+                </div>
+              {% endif %}
+              <span class="user-name">{{ session.user.name }}</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </div>
+            <div class="dropdown-menu">
+              <a href="{{ url_for('profile') }}" class="dropdown-item">
+                <i class="fas fa-user"></i> Profile
+              </a>
+              <a href="{{ url_for('dashboard') }}" class="dropdown-item">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="{{ url_for('logout') }}" class="dropdown-item logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <!-- User is not logged in -->
+          <a href="{{ url_for('choose_login') }}" class="login-btn">Login</a>
+        {% endif %}
+      </nav>
     </div>
-  </header>
+  </div>
+</header>
+
+<style>
+/* User Menu Styles */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.user-info:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-avatar-placeholder {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #4CAF50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+.user-name {
+  color: white;
+  font-weight: 500;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  color: white;
+  font-size: 12px;
+  transition: transform 0.3s;
+}
+
+.user-menu:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s;
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.user-menu:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-item i {
+  width: 16px;
+  font-size: 14px;
+}
+
+.dropdown-item.logout {
+  color: #e53e3e;
+}
+
+.dropdown-item.logout:hover {
+  background: #fed7d7;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 4px 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .user-name {
+    display: none;
+  }
+
+  .dropdown-menu {
+    right: -20px;
+    min-width: 160px;
+  }
+}
+
+/* Auth Status Indicator */
+.auth-status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 1001;
+  display: none;
+}
+
+.auth-status.show {
+  display: block;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+</style>
+
+<script>
+// Show authentication status notifications
+function showAuthStatus(message, type = 'success') {
+  const statusEl = document.createElement('div');
+  statusEl.className = `auth-status ${type}`;
+  statusEl.textContent = message;
+  statusEl.style.background = type === 'success' ? 'rgba(76, 175, 80, 0.9)' : 'rgba(244, 67, 54, 0.9)';
+
+  document.body.appendChild(statusEl);
+
+  setTimeout(() => {
+    statusEl.classList.add('show');
+  }, 100);
+
+  setTimeout(() => {
+    statusEl.remove();
+  }, 3000);
+}
+
+// Check for flash messages and show them
+window.addEventListener('DOMContentLoaded', function() {
+  // This would be populated by Flask flash messages
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        showAuthStatus('{{ message }}', '{{ category }}');
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+});
+</script>

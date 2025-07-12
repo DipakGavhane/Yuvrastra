@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - YUVRASTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details h1 {
+            font-size: 24px;
+            color: #2e7d32;
+            margin-bottom: 5px;
+        }
+
+        .user-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .auth-badge {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #2e7d32;
+            border: 2px solid #2e7d32;
+        }
+
+        .btn-outline:hover {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .card-icon.green {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        }
+
+        .card-icon.blue {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        .card-icon.purple {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        }
+
+        .card-icon.orange {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .card-content {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .action-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .action-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: #2e7d32;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-message h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h2>Welcome to YUVRASTRA Dashboard!</h2>
+            <p>Manage your account and explore all features from here.</p>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {% if user.photo_url %}
+                        <img src="{{ user.photo_url }}" alt="Profile Picture">
+                    {% else %}
+                        {{ user.name[0].upper() if user.name else 'U' }}
+                    {% endif %}
+                </div>
+                <div class="user-details">
+                    <h1>{{ user.name or 'User' }}</h1>
+                    <p>
+                        {% if user.email %}
+                            {{ user.email }}
+                        {% elif user.phone %}
+                            {{ user.phone }}
+                        {% else %}
+                            Welcome to YUVRASTRA
+                        {% endif %}
+                        <span class="auth-badge">{{ user.auth_type|title }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="{{ url_for('home') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Account Information -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon green">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Account Information</div>
+                        <div class="card-subtitle">Your account details</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong>User ID:</strong> {{ user.uid }}</p>
+                    <p><strong>Authentication:</strong> {{ user.auth_type|title }}</p>
+                    {% if user.provider %}
+                        <p><strong>Provider:</strong> {{ user.provider }}</p>
+                    {% endif %}
+                    <p><strong>Account Status:</strong> <span style="color: #4caf50;">Active</span></p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon blue">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Quick Stats</div>
+                        <div class="card-subtitle">Your activity overview</div>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">Active Sessions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ user.auth_type|title }}</div>
+                        <div class="stat-label">Login Method</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon purple">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Recent Activity</div>
+                        <div class="card-subtitle">Your latest actions</div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><i class="fas fa-sign-in-alt" style="color: #4caf50;"></i> Logged in successfully</p>
+                    <p><i class="fas fa-shield-alt" style="color: #2196f3;"></i> Account secured with {{ user.auth_type|title }}</p>
+                    <p><i class="fas fa-user-check" style="color: #ff9800;"></i> Profile information updated</p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon orange">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="card-title">Quick Actions</div>
+                        <div class="card-subtitle">Common tasks</div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <a href="{{ url_for('profile') }}" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">Edit Profile</div>
+                            <div style="font-size: 12px; color: #666;">Update your information</div>
+                        </div>
+                    </a>
+                    <a href="#" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">Settings</div>
+                            <div style="font-size: 12px; color: #666;">Manage preferences</div>
+                        </div>
+                    </a>
+                    <a href="#" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">Help & Support</div>
+                            <div style="font-size: 12px; color: #666;">Get assistance</div>
+                        </div>
+                    </a>
+                    <a href="{{ url_for('home') }}" class="action-item">
+                        <div class="action-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">Back to Home</div>
+                            <div style="font-size: 12px; color: #666;">Return to main page</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effect to cards
+            const cards = document.querySelectorAll('.dashboard-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Only trigger if not clicking on a button or link
+                    if (!e.target.closest('.btn, .action-item')) {
+                        this.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            this.style.transform = 'translateY(-5px)';
+                        }, 100);
+                    }
+                });
+            });
+
+            // Add logout confirmation
+            const logoutBtn = document.querySelector('a[href="{{ url_for("logout") }}"]');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    if (!confirm('Are you sure you want to logout?')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

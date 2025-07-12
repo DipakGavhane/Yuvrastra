@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - YUVRASTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            border: 5px solid white;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .profile-info {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .profile-details {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-value {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .auth-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .auth-badge.google {
+            background: #4285F4;
+            color: white;
+        }
+
+        .auth-badge.phone {
+            background: #34A853;
+            color: white;
+        }
+
+        .auth-badge.guest {
+            background: #888;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 20px;
+                padding: 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="profile-container">
+        <div class="profile-header">
+            {% if user.photo_url %}
+                <img src="{{ user.photo_url }}" alt="Profile Picture" class="profile-avatar">
+            {% else %}
+                <div class="profile-avatar-placeholder">
+                    <i class="fas fa-user"></i>
+                </div>
+            {% endif %}
+
+            <h1 class="profile-name">{{ user.name }}</h1>
+            <p class="profile-info">
+                <span class="auth-badge {{ user.auth_type }}">
+                    {% if user.auth_type == 'google' %}
+                        <i class="fab fa-google"></i> Google Account
+                    {% elif user.auth_type == 'phone' %}
+                        <i class="fas fa-phone"></i> Phone Verified
+                    {% elif user.auth_type == 'guest' %}
+                        <i class="fas fa-user"></i> Guest User
+                    {% endif %}
+                </span>
+            </p>
+        </div>
+
+        <div class="profile-details">
+            <h2 style="margin-bottom: 20px; color: #333;">
+                <i class="fas fa-info-circle"></i> Account Details
+            </h2>
+
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-user"></i> Name
+                </span>
+                <span class="detail-value">{{ user.name }}</span>
+            </div>
+
+            {% if user.email %}
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-envelope"></i> Email
+                </span>
+                <span class="detail-value">{{ user.email }}</span>
+            </div>
+            {% endif %}
+
+            {% if user.phone %}
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-phone"></i> Phone
+                </span>
+                <span class="detail-value">{{ user.phone }}</span>
+            </div>
+            {% endif %}
+
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-key"></i> Authentication Method
+                </span>
+                <span class="detail-value">
+                    <span class="auth-badge {{ user.auth_type }}">
+                        {% if user.auth_type == 'google' %}
+                            Google OAuth
+                        {% elif user.auth_type == 'phone' %}
+                            Phone OTP
+                        {% elif user.auth_type == 'guest' %}
+                            Guest Access
+                        {% endif %}
+                    </span>
+                </span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-id-card"></i> User ID
+                </span>
+                <span class="detail-value">{{ user.uid }}</span>
+            </div>
+
+            {% if user.last_seen %}
+            <div class="detail-row">
+                <span class="detail-label">
+                    <i class="fas fa-clock"></i> Last Seen
+                </span>
+                <span class="detail-value">{{ user.last_seen }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+
+            {% if user.auth_type == 'guest' %}
+            <a href="{{ url_for('choose_login') }}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Create Account
+            </a>
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to logout?')">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Copy User ID to clipboard
+        function copyUserId() {
+            const userId = '{{ user.uid }}';
+            navigator.clipboard.writeText(userId).then(() => {
+                showAuthStatus('User ID copied to clipboard!', 'success');
+            });
+        }
+
+        // Add click handler to User ID
+        document.addEventListener('DOMContentLoaded', function() {
+            const userIdRow = document.querySelector('.detail-row:nth-last-child(2)');
+            if (userIdRow) {
+                userIdRow.style.cursor = 'pointer';
+                userIdRow.title = 'Click to copy User ID';
+                userIdRow.addEventListener('click', copyUserId);
+            }
+        });
+    </script>
+</body>
+</html>
