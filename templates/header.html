@@ -32,9 +32,17 @@
               <a href="{{ url_for('profile') }}" class="dropdown-item">
                 <i class="fas fa-user"></i> Profile
               </a>
-              <a href="{{ url_for('dashboard') }}" class="dropdown-item">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-              </a>
+
+              {% if session.user.is_admin %}
+                  <a href="{{ url_for('dashboard') }}" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                  </a>
+              {% else %}
+                  <a href="{{ url_for('dashboard') }}" class="dropdown-item">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                  </a>
+              {% endif %}
+
               <div class="dropdown-divider"></div>
               <a href="{{ url_for('logout') }}" class="dropdown-item logout">
                 <i class="fas fa-sign-out-alt"></i> Logout
