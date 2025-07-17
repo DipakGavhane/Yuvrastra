@@ -1,5 +1,8 @@
 from flask import (Flask, render_template, redirect,
                    session, request, jsonify, url_for, flash, abort)
+# Remove these imports since you're not using Flask-Login properly
+# from flask_login import login_required, current_user
+
 import firebase_admin
 from firebase_admin import credentials, auth
 from functools import wraps
@@ -7,20 +10,24 @@ import secrets
 import os
 from dotenv import load_dotenv
 
-from model import db, User
 from datetime import datetime, timezone
+# Import your models and forms
+from models import *
+from forms import ProductForm, EditProductForm, BulkUploadForm, ProductSearchForm
+from admin_routes import admin
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
-
+# Register blueprints
+app.register_blueprint(admin)
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///yuvrastra.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)  # Bind the database with the Flask app
-
+init_db(app)
 
 # Initialize Firebase Admin SDK
 try:
@@ -33,28 +40,24 @@ except Exception as e:
 # Firebase Web API Key
 FIREBASE_WEB_API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
 
-
-def admin_required(f):
-    @wraps(f)
-    @login_required
-    def decorated_function(*args, **kwargs):
-        if not session['user']['is_admin']:
-            redirect(url_for('not_found_error'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
 def login_required(f):
     """Decorator to check if user is logged in"""
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user' not in session:
             return redirect(url_for('choose_login'))
         return f(*args, **kwargs)
-
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('choose_login'))
+        if not session['user'].get('is_admin'):
+            return redirect(url_for('not_found_error'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def get_or_create_user(firebase_user, auth_provider):
     """
@@ -139,11 +142,9 @@ def get_or_create_user(firebase_user, auth_provider):
         db.session.rollback()
         raise
 
-
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 @app.route('/guest')
 def guest_login():
@@ -155,7 +156,6 @@ def guest_login():
     }
     flash('Logged in as Guest', 'success')
     return redirect('/')
-
 
 # Simplified auth callback route
 @app.route('/auth/callback', methods=['POST'])
@@ -205,13 +205,11 @@ def auth_callback():
             'is_new_user': is_new_user
         })
 
-
     except (auth.InvalidIdTokenError, auth.ExpiredIdTokenError):
         return jsonify({'success': False, 'error': 'Invalid token'}), 400
     except Exception as e:
         print(f"Auth error: {e}")
         return jsonify({'success': False, 'error': 'Authentication failed'}), 500
-
 
 @app.route('/logout')
 def logout():
@@ -219,13 +217,11 @@ def logout():
     flash('Logged out successfully', 'info')
     return redirect('/')
 
-
 @app.route('/login')
 def choose_login():
     """Redirect to Google OAuth - This will be handled by frontend Firebase"""
     return render_template('Login.html',
                            firebase_api_key=FIREBASE_WEB_API_KEY)
-
 
 @app.route('/profile')
 @login_required
@@ -241,7 +237,6 @@ def profile():
 
     return render_template('profile.html', user=db_user)
 
-
 @app.route('/profile/setup')
 @login_required
 def profile_setup():
@@ -255,7 +250,6 @@ def profile_setup():
     # Temporary redirect to dashboard until template is created
     return redirect(url_for('dashboard'))
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -265,25 +259,11 @@ def dashboard():
 
     return render_template('dashboard.html', user=db_user)
 
-
 @app.route('/admin/dashboard')
-@login_required
 @admin_required
 def admin_dashboard():
     """Main admin dashboard with overview stats"""
-
-    # Get dashboard statistics (you'll need to implement these queries)
-    stats = {
-        'total_products': get_total_products(),
-        'pending_orders': get_pending_orders_count(),
-        'total_customers': get_total_customers(),
-        'monthly_revenue': get_monthly_revenue(),
-        'low_stock_products': get_low_stock_products_count(),
-        'recent_orders': get_recent_orders(limit=5)
-    }
-
-    return render_template('admin_dashboard.html', stats=stats)
-
+    return render_template('Add_Product.html')
 
 # API endpoint to get current user info
 @app.route('/api/user')
@@ -297,7 +277,6 @@ def get_user():
         else:
             return jsonify({'error': 'User not found in database'}), 404
     return jsonify({'error': 'Not authenticated'}), 401
-
 
 # API endpoint to update user profile
 @app.route('/api/user/update', methods=['POST'])
@@ -331,22 +310,15 @@ def update_user():
         db.session.rollback()
         return jsonify({'error': 'Failed to update user'}), 500
 
-
 # Add error handlers
 @app.errorhandler(404)
 def not_found_error(error):
     return jsonify({'error': 'Route not found'}), 404
 
-
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return jsonify({'error': 'Internal server error'}), 500
-
-
-with app.app_context():
-    db.create_all()
-    print("Database tables created successfully")
 
 if __name__ == '__main__':
     app.run(debug=True)
