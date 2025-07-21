@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+        }
+        .form-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            padding: 1.5rem;
+            margin: -1px -1px 0 -1px;
+        }
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #dee2e6;
+        }
+        .form-section h5 {
+            color: #495057;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            transform: translateY(-1px);
+        }
+        .btn-outline-secondary {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+        .image-placeholder {
+            width: 200px;
+            height: 150px;
+            background-color: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            flex-direction: column;
+        }
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .form-check-input {
+            margin-top: 0.25rem;
+        }
+        .form-check-label {
+            margin-left: 0.5rem;
+        }
+        .required {
+            color: #dc3545;
+        }
+        .form-floating label {
+            padding-left: 0.75rem;
+        }
+        .price-input {
+            position: relative;
+        }
+        .price-input::before {
+            content: "₹";
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-weight: 600;
+            z-index: 3;
+        }
+        .price-input .form-control {
+            padding-left: 2rem;
+        }
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+        .breadcrumb-item a {
+            color: #6c757d;
+            text-decoration: none;
+        }
+        .breadcrumb-item a:hover {
+            color: #007bff;
+        }
+        .breadcrumb-item.active {
+            color: #495057;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('home') if url_for('admin.dashboard') else '#' }}">
+                                <i class="fas fa-home me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{ url_for('admin.products') }}">
+                                <i class="fas fa-box me-1"></i>Products
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">Edit Product</li>
+                    </ol>
+                </nav>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{{ 'exclamation-circle' if category == 'error' else 'check-circle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Main Form Card -->
+                <div class="form-card">
+                    <div class="form-header">
+                        <h2 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>Edit Product
+                        </h2>
+                        <p class="mb-0 mt-2 opacity-75">Update product information and settings</p>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form method="POST" enctype="multipart/form-data" id="editProductForm">
+                            {{ form.hidden_tag() }}
+
+                            <!-- Basic Information Section -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">
+                                                Product Name <span class="required">*</span>
+                                            </label>
+                                            {{ form.name(class="form-control", placeholder="Enter product name") }}
+                                            {% if form.name.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.name.errors %}
+                                                        <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">
+                                                Price <span class="required">*</span>
+                                            </label>
+                                            <div class="price-input">
+                                                {{ form.price(class="form-control", placeholder="0.00", step="0.01") }}
+                                            </div>
+                                            {% if form.price.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.price.errors %}
+                                                        <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    {{ form.description(class="form-control", rows="4", placeholder="Enter product description...") }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.description.errors %}
+                                                <div>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Inventory Section -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-warehouse me-2"></i>Inventory</h5>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="stock" class="form-label">
+                                                Stock Quantity <span class="required">*</span>
+                                            </label>
+                                            {{ form.stock(class="form-control", placeholder="0") }}
+                                            {% if form.stock.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.stock.errors %}
+                                                        <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <div class="form-check">
+                                                {{ form.is_active(class="form-check-input") }}
+                                                <label class="form-check-label" for="is_active">
+                                                    Active Product
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">Inactive products won't be visible to customers</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Image Section -->
+                            <div class="form-section">
+                                <h5><i class="fas fa-image me-2"></i>Product Image</h5>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="image_file" class="form-label">Upload New Image</label>
+                                            {{ form.image_file(class="form-control", accept="image/*") }}
+                                            {% if form.image_file.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.image_file.errors %}
+                                                        <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                            <small class="text-muted">Supported formats: JPG, PNG, GIF (Max 5MB)</small>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="image_url" class="form-label">Or Image URL</label>
+                                            {{ form.image_url(class="form-control", placeholder="https://example.com/image.jpg") }}
+                                            {% if form.image_url.errors %}
+                                                <div class="text-danger small mt-1">
+                                                    {% for error in form.image_url.errors %}
+                                                        <div>{{ error }}</div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Current Image</label>
+                                        <div class="mt-2">
+                                            {% if product.image_url %}
+                                                <img src="{{ product.image_url }}"
+                                                     alt="{{ product.name }}"
+                                                     class="image-preview"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <div class="image-placeholder" style="display: none;">
+                                                    <i class="fas fa-image fa-2x mb-2"></i>
+                                                    <small>Image not available</small>
+                                                </div>
+                                            {% else %}
+                                                <div class="image-placeholder">
+                                                    <i class="fas fa-image fa-2x mb-2"></i>
+                                                    <small>No image uploaded</small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between pt-3">
+                                <a href="{{ url_for('admin.products') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-1"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Update Product
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation
+            const form = document.getElementById('editProductForm');
+            const imageFile = document.getElementById('image_file');
+            const imageUrl = document.getElementById('image_url');
+
+            // Clear image URL when file is selected
+            if (imageFile) {
+                imageFile.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        imageUrl.value = '';
+                    }
+                });
+            }
+
+            // Clear file input when URL is entered
+            if (imageUrl) {
+                imageUrl.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        imageFile.value = '';
+                    }
+                });
+            }
+
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                const name = document.getElementById('name').value.trim();
+                const price = document.getElementById('price').value.trim();
+                const stock = document.getElementById('stock').value.trim();
+
+                if (!name || !price || !stock) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields.');
+                    return false;
+                }
+
+                if (parseFloat(price) < 0) {
+                    e.preventDefault();
+                    alert('Price cannot be negative.');
+                    return false;
+                }
+
+                if (parseInt(stock) < 0) {
+                    e.preventDefault();
+                    alert('Stock quantity cannot be negative.');
+                    return false;
+                }
+
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Updating...';
+            });
+
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

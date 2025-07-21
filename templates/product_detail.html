@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - YUVRASTRA Agro Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            margin-top: 80px;
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .product-image-section {
+            position: relative;
+        }
+
+        .product-main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-main-image:hover {
+            transform: scale(1.02);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: white;
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .product-badge.out-of-stock {
+            background: linear-gradient(45deg, #dc3545, #e74c3c);
+        }
+
+        .product-badge.low-stock {
+            background: linear-gradient(45deg, #ffc107, #f39c12);
+            color: #000;
+        }
+
+        .product-info-section {
+            padding: 20px 0;
+        }
+
+        .product-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .product-price::before {
+            content: "₹";
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+
+        .product-stock-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stock-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .stock-available {
+            color: #28a745;
+        }
+
+        .stock-low {
+            color: #ffc107;
+        }
+
+        .stock-out {
+            color: #dc3545;
+        }
+
+        .product-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0056b3, #004494);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #20c997, #17a2b8);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quantity-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            background: #f8f9fa;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #e9ecef;
+        }
+
+        .quantity-input {
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            width: 60px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: #0056b3;
+        }
+
+        .related-products {
+            margin-top: 60px;
+        }
+
+        .related-products-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .related-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .related-product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .related-product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .related-product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .related-product-info {
+            padding: 20px;
+        }
+
+        .related-product-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .related-product-price {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .related-product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .product-title {
+                font-size: 2em;
+            }
+
+            .product-price {
+                font-size: 1.8em;
+            }
+
+            .product-actions {
+                flex-direction: column;
+            }
+
+            .related-products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="product-detail-container">
+        <!-- Back Button -->
+        <a href="{{ url_for('home') }}" class="back-button">
+            <i class="fas fa-arrow-left"></i>
+            Back to Products
+        </a>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+            <i class="fas fa-check-circle"></i>
+            Product added to cart successfully!
+        </div>
+
+        <!-- Product Detail Grid -->
+        <div class="product-detail-grid">
+            <!-- Product Image Section -->
+            <div class="product-image-section">
+                <!-- Product Badge -->
+                {% if product.stock == 0 %}
+                    <div class="product-badge out-of-stock">Out of Stock</div>
+                {% elif product.stock < 10 %}
+                    <div class="product-badge low-stock">Low Stock</div>
+                {% else %}
+                    <div class="product-badge">Available</div>
+                {% endif %}
+
+                <!-- Main Product Image -->
+                {% if product.image_url %}
+                    <img src="{{ product.image_url }}"
+                         alt="{{ product.name }}"
+                         class="product-main-image"
+                         onerror="this.src='{{ url_for('static', filename='images/pro.png') }}'">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/pro.png') }}"
+                         alt="{{ product.name }}"
+                         class="product-main-image">
+                {% endif %}
+            </div>
+
+            <!-- Product Info Section -->
+            <div class="product-info-section">
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                <div class="product-price">{{ "%.2f"|format(product.price) }}</div>
+
+                <!-- Stock Information -->
+                <div class="product-stock-info">
+                    {% if product.stock == 0 %}
+                        <div class="stock-indicator stock-out">
+                            <i class="fas fa-times-circle"></i>
+                            <span>Out of Stock</span>
+                        </div>
+                    {% elif product.stock < 10 %}
+                        <div class="stock-indicator stock-low">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Only {{ product.stock }} left in stock</span>
+                        </div>
+                    {% else %}
+                        <div class="stock-indicator stock-available">
+                            <i class="fas fa-check-circle"></i>
+                            <span>{{ product.stock }} in stock</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Product Description -->
+                {% if product.description %}
+                    <div class="product-description">
+                        <h3><i class="fas fa-info-circle"></i> Product Description</h3>
+                        <p>{{ product.description }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Quantity Selector -->
+                {% if product.stock > 0 %}
+                    <div class="quantity-selector">
+                        <span class="quantity-label">Quantity:</span>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="{{ product.stock }}">
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Product Actions -->
+                <div class="product-actions">
+                    {% if product.stock > 0 %}
+                        <button class="btn btn-success" onclick="addToCart()">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn btn-primary" onclick="buyNow()">
+                            <i class="fas fa-bolt"></i>
+                            Buy Now
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary" disabled>
+                            <i class="fas fa-ban"></i>
+                            Currently Unavailable
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        {% if related_products %}
+            <div class="related-products">
+                <h2 class="related-products-title">Related Products</h2>
+                <div class="related-products-grid">
+                    {% for related_product in related_products %}
+                        <div class="related-product-card">
+                            {% if related_product.image_url %}
+                                <img src="{{ related_product.image_url }}"
+                                     alt="{{ related_product.name }}"
+                                     class="related-product-image"
+                                     onerror="this.src='{{ url_for('static', filename='images/pro.png') }}'">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='images/pro.png') }}"
+                                     alt="{{ related_product.name }}"
+                                     class="related-product-image">
+                            {% endif %}
+
+                            <div class="related-product-info">
+                                <h3 class="related-product-title">{{ related_product.name }}</h3>
+                                <div class="related-product-price">₹{{ "%.2f"|format(related_product.price) }}</div>
+
+                                <div class="related-product-actions">
+                                    <a href="{{ url_for('admin.product_detail', product_id=related_product.id) }}"
+                                       class="btn btn-primary btn-small">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    {% if related_product.stock > 0 %}
+                                        <a href="{{ url_for('add_to_cart', product_id=related_product.id) if url_for('add_to_cart', product_id=related_product.id) else '#' }}"
+                                           class="btn btn-success btn-small">
+                                            <i class="fas fa-cart-plus"></i> Add
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-secondary btn-small" disabled>
+                                            <i class="fas fa-ban"></i> Out
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Include your footer here -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">YUVRASTRA - Agro Solution</h3>
+            <p class="footer-tagline">Empowering Indian Farmers with Innovative Agro Products</p>
+            <p class="footer-copyright">© 2025 YUVRASTRA. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quantity Control Functions
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const maxValue = parseInt(quantityInput.getAttribute('max'));
+
+            if (currentValue < maxValue) {
+                quantityInput.value = currentValue + 1;
+            }
+        }
+
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
+
+        // Add to Cart Function
+        function addToCart() {
+            const quantity = document.getElementById('quantity').value;
+            const productId = {{ product.id }};
+
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+
+            // Here you would typically make an AJAX request to add the product to cart
+            // For now, we'll just show the success message
+            console.log(`Adding ${quantity} of product ${productId} to cart`);
+
+            // You can implement actual cart functionality here
+            // Example:
+            // fetch('/add_to_cart', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         product_id: productId,
+            //         quantity: quantity
+            //     })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         successMessage.classList.add('show');
+            //         setTimeout(() => successMessage.classList.remove('show'), 3000);
+            //     }
+            // });
+        }
+
+        // Buy Now Function
+        function buyNow() {
+            const quantity = document.getElementById('quantity').value;
+            const productId = {{ product.id }};
+
+            // Redirect to checkout or implement buy now logic
+            console.log(`Buying ${quantity} of product ${productId}`);
+
+            // You can implement checkout functionality here
+            // For now, we'll just show an alert
+            alert(`Proceeding to checkout with ${quantity} item(s)`);
+        }
+
+        // Prevent quantity input from going below 1 or above max
+        document.getElementById('quantity').addEventListener('input', function() {
+            const value = parseInt(this.value);
+            const min = parseInt(this.getAttribute('min'));
+            const max = parseInt(this.getAttribute('max'));
+
+            if (value < min) this.value = min;
+            if (value > max) this.value = max;
+        });
+    </script>
+</body>
+</html>

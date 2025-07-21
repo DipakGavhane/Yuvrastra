@@ -7,6 +7,183 @@
   <title>YUVRASTRA - Agro Solutions</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    /* Additional styles for product cards */
+    .product-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+
+    .product-price {
+      color: #28a745;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+
+    .product-stock {
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .stock-available {
+      color: #28a745;
+    }
+
+    .stock-low {
+      color: #ffc107;
+    }
+
+    .stock-out {
+      color: #dc3545;
+    }
+
+    .product-description {
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 15px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      flex: 1;
+      text-align: center;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      flex: 1;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background-color: #545b62;
+    }
+
+    .btn-secondary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .no-products {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .no-products i {
+      font-size: 4em;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .view-all-products {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .view-all-products a {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .view-all-products a:hover {
+      background-color: #218838;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #28a745;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .product-badge.out-of-stock {
+      background-color: #dc3545;
+    }
+
+    .product-badge.low-stock {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    /* Cart notification styles */
+    .cart-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .cart-notification.show {
+      transform: translateX(0);
+    }
+
+    .cart-notification i {
+      margin-right: 10px;
+    }
+  </style>
 </head>
 
 <body>
@@ -21,13 +198,13 @@
         <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="YUVRASTRA Logo" class="hero-logo">
         <h1 class="hero-title">YUVRASTRA</h1>
       </div>
-      
+
       <h2 class="hero-slogan">जय जवान जय किसान</h2>
-      
+
       <p class="hero-subtitle">
         Empowering agriculture with modern, sustainable, and premium solutions.
       </p>
-      
+
       <div class="achievement-image">
         <img src="{{ url_for('static', filename='images/Screenshot 2024-07-05 214922.png') }}" alt="Our Achievements">
         <div class="achievement-caption">Our Achievements</div>
@@ -65,19 +242,19 @@
   <section class="section" id="team">
     <h2 class="section-title">Our Team</h2>
     <div class="card-grid">
-      
+
       <!-- Team Member 1: Yuvraj -->
       <div class="card team-card">
         <img src="{{ url_for('static', filename='images/IMG_0112.JPG') }}" alt="Yuvraj Pramod Ghugare" class="team-avatar">
         <h3 class="team-name">Yuvraj Pramod Ghugare</h3>
         <p class="team-role">Founder & CEO</p>
         <button class="card-btn" onclick="toggleBio('yuvraj-bio')">More Info</button>
-        
+
         <div id="yuvraj-bio" class="bio-section">
           <p><strong>Founder & CEO – YUVRASTRA - Agro Solution</strong></p>
           <p>Yuvraj Ghugare is the 18-year-old Founder & CEO of YUVRASTRA - Agro Solution, a rising agro-tech brand dedicated to delivering innovative and practical solutions for the farming community. With a strong vision to modernize agriculture and support farmers across India, Yuvraj brings youthful energy, leadership, and a deep-rooted passion for rural development. His dedication to empowering farmers through quality and service continues to drive the company forward.</p>
         </div>
-        
+
         <div class="social-links">
           <a href="mailto:yuvrastra@gmail.com" target="_blank" title="Email">
             <i class="fas fa-envelope social-icon"></i>
@@ -100,12 +277,12 @@
         <h3 class="team-name">Sandhya Ghugare</h3>
         <p class="team-role">Co-Founder</p>
         <button class="card-btn" onclick="toggleBio('sandhya-bio')">More Info</button>
-        
+
         <div id="sandhya-bio" class="bio-section">
           <p><strong>Co-Founder – YUVRASTRA - Agro Solution</strong></p>
           <p>Hello, I am here!</p>
         </div>
-        
+
         <div class="social-links">
           <a href="mailto:yuvrastra@gmail.com" target="_blank" title="Email">
             <i class="fas fa-envelope social-icon"></i>
@@ -125,24 +302,95 @@
   </section>
 
   <!-- ==========================================================================
-       PRODUCTS SECTION
+       PRODUCTS SECTION - NOW DYNAMIC
        ========================================================================== -->
   <section class="section" id="products">
-    <h2 class="section-title">Products</h2>
-    <div class="card-grid">
-      <div class="card">
-        <img src="{{ url_for('static', filename='images/logo 2.png') }}" alt="Organic Fertilizer">
-        <h3 class="card-title">Organic Fertilizer</h3>
-        <p class="card-text">Boost soil fertility naturally.</p>
-        <a href="product1.html" class="card-btn">More Info</a>
+    <h2 class="section-title">Our Products</h2>
+
+    {% if products %}
+      <div class="card-grid">
+        {% for product in products %}
+          <div class="card product-card">
+            <!-- Product Badge -->
+            {% if product.stock == 0 %}
+              <div class="product-badge out-of-stock">Out of Stock</div>
+            {% elif product.stock < 10 %}
+              <div class="product-badge low-stock">Low Stock</div>
+            {% else %}
+              <div class="product-badge">Available</div>
+            {% endif %}
+
+            <!-- Product Image -->
+            {% if product.image_url %}
+              <img src="{{ product.image_url }}"
+                   alt="{{ product.name }}"
+                   class="product-image"
+                   onerror="this.src='{{ url_for('static', filename='images/pro.png') }}'">
+            {% else %}
+              <img src="{{ url_for('static', filename='images/pro.png') }}"
+                   alt="{{ product.name }}"
+                   class="product-image">
+            {% endif %}
+
+            <!-- Product Info -->
+            <div class="card-content">
+              <h3 class="card-title">{{ product.name }}</h3>
+
+              {% if product.description %}
+                <p class="product-description">{{ product.description }}</p>
+              {% endif %}
+
+              <div class="product-price">₹{{ "%.2f"|format(product.price) }}</div>
+
+              <div class="product-stock">
+                {% if product.stock == 0 %}
+                  <span class="stock-out">
+                    <i class="fas fa-times-circle"></i> Out of Stock
+                  </span>
+                {% elif product.stock < 10 %}
+                  <span class="stock-low">
+                    <i class="fas fa-exclamation-triangle"></i> Only {{ product.stock }} left
+                  </span>
+                {% else %}
+                  <span class="stock-available">
+                    <i class="fas fa-check-circle"></i> {{ product.stock }} in stock
+                  </span>
+                {% endif %}
+              </div>
+
+              <div class="product-actions">
+                <a href="{{ url_for('admin.product_detail', product_id=product.id) }}"
+                   class="btn-primary">
+                  <i class="fas fa-eye"></i> View Details
+                </a>
+                {% if product.stock > 0 %}
+                  <button class="btn-secondary" onclick="addToCart({{ product.id }}, '{{ product.name }}')">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                  </button>
+                {% else %}
+                  <button class="btn-secondary" disabled>
+                    <i class="fas fa-ban"></i> Unavailable
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
       </div>
-      <div class="card">
-        <img src="{{ url_for('static', filename='images/pro.png') }}" alt="Hybrid Seeds">
-        <h3 class="card-title">Hybrid Seeds</h3>
-        <p class="card-text">High-yield seeds for diverse climates.</p>
-        <a href="product2.html" class="card-btn">More Info</a>
+
+      <!-- View All Products Button -->
+      <div class="view-all-products">
+        <a href="{{ url_for('admin.products') }}">
+          <i class="fas fa-th-large"></i> View All Products
+        </a>
       </div>
-    </div>
+    {% else %}
+      <div class="no-products">
+        <i class="fas fa-box-open"></i>
+        <h3>No Products Available</h3>
+        <p>We're working on adding amazing products for you. Check back soon!</p>
+      </div>
+    {% endif %}
   </section>
 
   <!-- ==========================================================================
@@ -150,10 +398,10 @@
        ========================================================================== -->
   <section class="section" id="gallery">
     <h2 class="section-title">Gallery</h2>
-    
+
     <div class="gallery-container">
       <button class="gallery-arrow left" onclick="prevSlide()">&#10094;</button>
-      
+
       <div class="gallery-slider" id="gallerySlider">
         <div class="gallery-item" onclick="openPopup(this)">
           <img src="{{ url_for('static', filename='images/IMG_0112.JPG') }}" alt="CEO at Event">
@@ -188,7 +436,7 @@
           <div class="gallery-desc">Achievements</div>
         </div>
       </div>
-      
+
       <button class="gallery-arrow right" onclick="nextSlide()">&#10095;</button>
     </div>
 
@@ -205,7 +453,7 @@
        ========================================================================== -->
   <section class="section contact-section" id="contact">
     <h2 class="contact-title">Contact Us</h2>
-    
+
     <div class="contact-icons">
       <a href="mailto:yuvrastra@gmail.com" target="_blank" class="contact-icon email" title="Email">
         <i class="fas fa-envelope"></i>
@@ -220,7 +468,7 @@
         <i class="fab fa-facebook-f"></i>
       </a>
       <a href="https://www.linkedin.com/in/yourprofile" target="_blank" class="contact-icon linkedin" title="LinkedIn">
-        <i class="fab fa-linkedin-in"></i>
+        <i class="fab fa-linkedin-in social-icon"></i>
       </a>
       <a href="https://wa.me/918261800991" target="_blank" class="contact-icon whatsapp" title="WhatsApp">
         <i class="fab fa-whatsapp"></i>
@@ -235,6 +483,12 @@
     <i class="fab fa-whatsapp"></i>
   </a>
 
+  <!-- Cart Notification -->
+  <div id="cartNotification" class="cart-notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="cartMessage">Product added to cart!</span>
+  </div>
+
   <!-- ==========================================================================
        FOOTER
        ========================================================================== -->
@@ -248,7 +502,7 @@
 
   <!-- ==========================================================================
        JAVASCRIPT
-       ========================================================================== */
+       ========================================================================== -->
   <script>
     // Team bio toggle functionality
     function toggleBio(bioId) {
@@ -275,4 +529,113 @@
       if (currentIndex < slider.children.length - 3) {
         currentIndex++;
       } else {
-        currentIndex = 0; // Loop back to
+        currentIndex = 0; // Loop back to start
+      }
+      updateSlider();
+    }
+
+    function prevSlide() {
+      const slider = document.getElementById('gallerySlider');
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = slider.children.length - 3; // Loop to end
+      }
+      updateSlider();
+    }
+
+    // Gallery popup functionality
+    function openPopup(element) {
+      const popup = document.getElementById('imagePopup');
+      const popupImg = document.getElementById('popupImg');
+      const popupDesc = document.getElementById('popupDesc');
+
+      const img = element.querySelector('img');
+      const desc = element.querySelector('.gallery-desc');
+
+      popupImg.src = img.src;
+      popupImg.alt = img.alt;
+      popupDesc.textContent = desc.textContent;
+
+      popup.style.display = 'block';
+    }
+
+    function closePopup() {
+      document.getElementById('imagePopup').style.display = 'none';
+    }
+
+    // Add to Cart functionality
+    function addToCart(productId, productName) {
+      // Show cart notification
+      const notification = document.getElementById('cartNotification');
+      const message = document.getElementById('cartMessage');
+
+      message.textContent = `${productName} added to cart!`;
+      notification.classList.add('show');
+
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+
+      // Log for debugging
+      console.log(`Adding product ${productId} (${productName}) to cart`);
+
+      // Here you can implement actual cart functionality
+      // Example AJAX call to your backend:
+      /*
+      fetch('/add_to_cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          quantity: 1
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Cart updated successfully
+          message.textContent = `${productName} added to cart!`;
+          notification.classList.add('show');
+          setTimeout(() => notification.classList.remove('show'), 3000);
+        } else {
+          // Handle error
+          message.textContent = 'Error adding to cart';
+          notification.style.backgroundColor = '#dc3545';
+          notification.classList.add('show');
+          setTimeout(() => {
+            notification.classList.remove('show');
+            notification.style.backgroundColor = '#28a745';
+          }, 3000);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        message.textContent = 'Error adding to cart';
+        notification.style.backgroundColor = '#dc3545';
+        notification.classList.add('show');
+        setTimeout(() => {
+          notification.classList.remove('show');
+          notification.style.backgroundColor = '#28a745';
+        }, 3000);
+      });
+      */
+    }
+
+    // Initialize gallery
+    window.addEventListener('load', function() {
+      updateSlider();
+    });
+
+    // Close popup when clicking outside the image
+    document.getElementById('imagePopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePopup();
+      }
+    });
+  </script>
+</body>
+</html>

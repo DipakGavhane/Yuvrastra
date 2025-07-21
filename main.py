@@ -142,9 +142,18 @@ def get_or_create_user(firebase_user, auth_provider):
         db.session.rollback()
         raise
 
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    """Main homepage route with featured products"""
+    # Get featured products (active products with stock, limited to 6 for homepage)
+    featured_products = Product.query.filter(
+        Product.is_active == True
+    ).order_by(
+        Product.created_at.desc()
+    ).limit(6).all()
+
+    return render_template('index.html', products=featured_products)
 
 @app.route('/guest')
 def guest_login():
@@ -220,8 +229,8 @@ def logout():
 @app.route('/login')
 def choose_login():
     """Redirect to Google OAuth - This will be handled by frontend Firebase"""
-    return render_template('Login.html',
-                           firebase_api_key=FIREBASE_WEB_API_KEY)
+    return render_template('Login.html', firebase_api_key=FIREBASE_WEB_API_KEY)
+
 
 @app.route('/profile')
 @login_required
@@ -319,6 +328,21 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return jsonify({'error': 'Internal server error'}), 500
+
+
+# Optional: Add to cart functionality (if you have a cart system)
+@app.route('/add-to-cart/<int:product_id>')
+def add_to_cart(product_id):
+    """Add product to cart"""
+    product = Product.query.get_or_404(product_id)
+
+    if product.stock > 0:
+        # Add your cart logic here
+        flash(f'{product.name} added to cart!', 'success')
+    else:
+        flash(f'{product.name} is out of stock!', 'error')
+
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

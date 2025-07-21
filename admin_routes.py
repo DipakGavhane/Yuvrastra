@@ -112,6 +112,23 @@ def products():
     return render_template('admin/products.html', products=products, form=form)
 
 
+# Optional: Product detail page
+@admin.route('/product/<int:product_id>')
+def product_detail(product_id):
+    """Individual product detail page"""
+    product = Product.query.get_or_404(product_id)
+
+    # Get related products (same category or similar)
+    related_products = Product.query.filter(
+        Product.is_active == True,
+        Product.id != product_id
+    ).limit(4).all()
+
+    return render_template('product_detail.html',
+                           product=product,
+                           related_products=related_products)
+
+
 @admin.route('/products/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -149,6 +166,8 @@ def add_product():
             flash(f'Error adding product: {str(e)}', 'error')
 
     return render_template('admin/add_product.html', form=form)
+
+
 
 
 @admin.route('/products/edit/<int:product_id>', methods=['GET', 'POST'])
