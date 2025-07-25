@@ -51,25 +51,18 @@ def admin_required(f):
 @admin_required
 def dashboard():
     """Admin dashboard with key metrics"""
-    # Get key metrics
-    total_products = Product.query.count()
-    active_products = Product.query.filter_by(is_active=True).count()
-    total_orders = Order.query.count()
-    pending_orders = Order.query.filter_by(status=OrderStatus.PENDING).count()
-
-    # Recent orders
-    recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
-
-    # Low stock products (less than 10 items)
-    low_stock_products = Product.query.filter(Product.stock < 10, Product.is_active == True).all()
-
-    return render_template('admin/dashboard.html',
-                           total_products=total_products,
-                           active_products=active_products,
-                           total_orders=total_orders,
-                           pending_orders=pending_orders,
-                           recent_orders=recent_orders,
-                           low_stock_products=low_stock_products)
+    # Gather dashboard stats
+    stats = {
+        'total_products': Product.query.count(),
+        'total_orders': Order.query.count(),
+        'total_customers': User.query.count(),
+        'pending_orders': Order.query.filter_by(status=OrderStatus.PENDING).count(),
+        'low_stock_products': Product.query.filter(Product.stock < 10, Product.is_active == True).count(),
+        'products': Product.query.order_by(Product.created_at.desc()).limit(10).all(),
+        'orders': Order.query.order_by(Order.created_at.desc()).limit(10).all(),
+        'customers': User.query.order_by(User.created_at.desc()).limit(10).all(),
+    }
+    return render_template('admin/admin_dashboard.html', stats=stats)
 
 
 # Products management

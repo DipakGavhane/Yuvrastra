@@ -14,6 +14,14 @@
         <a href="#products" class="nav-link">Products</a>
         <a href="#contact" class="nav-link">Contact</a>
 
+        <!-- Cart Icon -->
+        <a href="{{ url_for('cart.view_cart') }}" class="nav-link cart-link" style="position:relative;">
+          <i class="fas fa-shopping-cart"></i>
+          {% if session.cart and session.cart|length > 0 %}
+            <span class="cart-badge">{{ session.cart|length }}</span>
+          {% endif %}
+        </a>
+
         {% if session.user %}
           <!-- User is logged in -->
           <div class="user-menu">
@@ -34,7 +42,7 @@
               </a>
 
               {% if session.user.is_admin %}
-                  <a href="{{ url_for('admin.products') }}" class="dropdown-item">
+                  <a href="{{ url_for('admin.dashboard') }}" class="dropdown-item">
                     <i class="fas fa-tachometer-alt"></i> Admin Dashboard
                   </a>
               {% else %}
@@ -214,6 +222,31 @@
     opacity: 1;
   }
 }
+
+.cart-link {
+  color: white;
+  font-size: 1.2rem;
+  margin-left: 18px;
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s;
+}
+.cart-link:hover {
+  color: #4CAF50;
+}
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #e53e3e;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  z-index: 2;
+}
 </style>
 
 <script>
@@ -235,15 +268,19 @@ function showAuthStatus(message, type = 'success') {
   }, 3000);
 }
 
-// Check for flash messages and show them
 window.addEventListener('DOMContentLoaded', function() {
-  // This would be populated by Flask flash messages
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        showAuthStatus('{{ message }}', '{{ category }}');
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+  // This will be populated by Flask flash messages
 });
 </script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      window.addEventListener('DOMContentLoaded', function() {
+        {% for category, message in messages %}
+          showAuthStatus({{ message|tojson }}, {{ category|tojson }});
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+{% endwith %}

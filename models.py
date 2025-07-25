@@ -96,6 +96,9 @@ class Product(db.Model):
     description = db.Column(db.Text)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     stock = db.Column(db.Integer, default=0)
+    low_stock_threshold = db.Column(db.Integer, nullable=False, default=5)
+
+    # Image URL
     image_url = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -111,6 +114,7 @@ class Product(db.Model):
             'description': self.description,
             'price': float(self.price),
             'stock': self.stock,
+            'low_stock_threshold': self.low_stock_threshold,
             'image_url': self.image_url,
             'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
@@ -252,50 +256,3 @@ def init_db(app):
             print("Sample products created!")
 
         print("Database initialized successfully!")
-
-
-# Usage example:
-"""
-# In your Flask app:
-from models import db, Product, Order, OrderItem, init_db
-
-# Initialize with your Flask app
-db.init_app(app)
-init_db(app)
-
-# Create a product
-product = Product(
-    name='New Product',
-    description='Product description',
-    price=99.99,
-    stock=20
-)
-db.session.add(product)
-db.session.commit()
-
-# Create an order
-order = Order(
-    user_id=1,
-    customer_name='John Doe',
-    customer_email='john@example.com',
-    shipping_address='123 Main St',
-    shipping_city='New York',
-    shipping_state='NY',
-    shipping_zip='10001',
-    total_amount=99.99
-)
-db.session.add(order)
-db.session.commit()
-
-# Add items to order
-order_item = OrderItem(
-    order_id=order.id,
-    product_id=product.id,
-    product_name=product.name,
-    product_price=product.price,
-    quantity=1,
-    subtotal=product.price
-)
-db.session.add(order_item)
-db.session.commit()
-"""

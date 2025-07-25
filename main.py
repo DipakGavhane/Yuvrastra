@@ -1,7 +1,4 @@
-from flask import (Flask, render_template, redirect,
-                   session, request, jsonify, url_for, flash, abort)
-# Remove these imports since you're not using Flask-Login properly
-# from flask_login import login_required, current_user
+from flask import Flask, render_template, redirect, session, request, jsonify, url_for, flash, abort
 
 import firebase_admin
 from firebase_admin import credentials, auth
@@ -15,6 +12,7 @@ from datetime import datetime, timezone
 from models import *
 from forms import ProductForm, EditProductForm, BulkUploadForm, ProductSearchForm
 from admin_routes import admin
+from cart_routes import cart_bp
 
 load_dotenv()
 
@@ -22,6 +20,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 # Register blueprints
 app.register_blueprint(admin)
+app.register_blueprint(cart_bp)
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///yuvrastra.db')
@@ -33,21 +32,24 @@ init_db(app)
 try:
     cred = credentials.Certificate("serviceAccountKey.json")
     firebase_admin.initialize_app(cred)
-    print("Firebase initialized successfully")
 except Exception as e:
     print(f"Firebase initialization error: {e}")
 
 # Firebase Web API Key
 FIREBASE_WEB_API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
 
+
 def login_required(f):
     """Decorator to check if user is logged in"""
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user' not in session:
             return redirect(url_for('choose_login'))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def admin_required(f):
     @wraps(f)
@@ -57,7 +59,9 @@ def admin_required(f):
         if not session['user'].get('is_admin'):
             return redirect(url_for('not_found_error'))
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def get_or_create_user(firebase_user, auth_provider):
     """
@@ -98,7 +102,6 @@ def get_or_create_user(firebase_user, auth_provider):
             if updated:
                 db.session.commit()
 
-            print(f"Existing user logged in: {user.email}")
             return user, False
 
         else:
@@ -134,7 +137,6 @@ def get_or_create_user(firebase_user, auth_provider):
             db.session.add(new_user)
             db.session.commit()
 
-            print(f"New user created: {new_user.email}")
             return new_user, True
 
     except Exception as e:
@@ -155,6 +157,7 @@ def home():
 
     return render_template('index.html', products=featured_products)
 
+
 @app.route('/guest')
 def guest_login():
     # For guest users, we might want to create a temporary record or handle differently
@@ -165,6 +168,7 @@ def guest_login():
     }
     flash('Logged in as Guest', 'success')
     return redirect('/')
+
 
 # Simplified auth callback route
 @app.route('/auth/callback', methods=['POST'])
@@ -220,11 +224,13 @@ def auth_callback():
         print(f"Auth error: {e}")
         return jsonify({'success': False, 'error': 'Authentication failed'}), 500
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     flash('Logged out successfully', 'info')
     return redirect('/')
+
 
 @app.route('/login')
 def choose_login():
@@ -246,6 +252,7 @@ def profile():
 
     return render_template('profile.html', user=db_user)
 
+
 @app.route('/profile/setup')
 @login_required
 def profile_setup():
@@ -259,6 +266,7 @@ def profile_setup():
     # Temporary redirect to dashboard until template is created
     return redirect(url_for('dashboard'))
 
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -268,11 +276,140 @@ def dashboard():
 
     return render_template('dashboard.html', user=db_user)
 
+
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
     """Main admin dashboard with overview stats"""
     return render_template('Add_Product.html')
+
+
+@app.route('/checkout')
+@login_required
+def checkout():
+    """Checkout page"""
+    cart = session.get('cart', {})
+    if not cart:
+        flash('Your cart is empty.', 'warning')
+        return redirect(url_for('cart.view_cart'))
+
+    product_ids = [int(pid) for pid in cart.keys()]
+    products = Product.query.filter(Product.id.in_(product_ids)).all() if product_ids else []
+
+    cart_items = []
+    total = 0
+
+    for product in products:
+        if not product.is_active:
+            continue
+
+        quantity = cart.get(str(product.id), 0)
+        if quantity > 0:
+            subtotal = float(product.price * quantity)
+            cart_items.append({
+                'product': product,
+                'quantity': quantity,
+                'subtotal': subtotal
+            })
+            total += subtotal
+
+    if not cart_items:
+        flash('Your cart is empty.', 'warning')
+        return redirect(url_for('cart.view_cart'))
+
+    return render_template('checkout.html', cart_items=cart_items, total=total)
+
+
+@app.route('/place_order', methods=['POST'])
+@login_required
+def place_order():
+    """Handle order placement"""
+    try:
+        cart = session.get('cart', {})
+        if not cart:
+            flash('Your cart is empty.', 'error')
+            return redirect(url_for('cart.view_cart'))
+
+        # Get form data
+        name = request.form.get('name')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        address = request.form.get('address')
+        city = request.form.get('city')
+        state = request.form.get('state')
+        zip_code = request.form.get('zip')
+
+        # Validate required fields
+        if not all([name, email, phone, address, city, state, zip_code]):
+            flash('Please fill in all required fields.', 'error')
+            return redirect(url_for('checkout'))
+
+        # Create order
+        order = Order(
+            user_id=session['user']['id'],
+            customer_name=name,
+            customer_email=email,
+            customer_phone=phone,
+            shipping_address=address,
+            shipping_city=city,
+            shipping_state=state,
+            shipping_zip=zip_code,
+            total_amount=0  # Will be calculated below
+        )
+
+        # Add order items
+        total_amount = 0
+        product_ids = [int(pid) for pid in cart.keys()]
+        products = Product.query.filter(Product.id.in_(product_ids)).all() if product_ids else []
+
+        for product in products:
+            quantity = cart.get(str(product.id), 0)
+            if quantity > 0 and product.is_active and product.stock >= quantity:
+                subtotal = float(product.price * quantity)
+                total_amount += subtotal
+
+                order_item = OrderItem(
+                    product_id=product.id,
+                    product_name=product.name,
+                    product_price=product.price,
+                    quantity=quantity,
+                    subtotal=subtotal
+                )
+                order.order_items.append(order_item)
+
+                # Update product stock
+                product.stock -= quantity
+
+        if not order.order_items:
+            flash('No valid items in cart.', 'error')
+            return redirect(url_for('cart.view_cart'))
+
+        # Set final total and save order
+        order.total_amount = total_amount
+        db.session.add(order)
+        db.session.commit()
+
+        # Clear cart
+        session.pop('cart', None)
+        flash('Order placed successfully!', 'success')
+        return redirect(url_for('order_confirmation', order_id=order.id))
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Order error: {e}")  # Add logging
+        flash('An error occurred while placing your order.', 'error')
+        return redirect(url_for('checkout'))
+
+
+@app.route('/order_confirmation/<int:order_id>')
+@login_required
+def order_confirmation(order_id):
+    """Order confirmation page"""
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != session['user']['id']:
+        abort(403)
+    return render_template('order_confirmation.html', order=order)
+
 
 # API endpoint to get current user info
 @app.route('/api/user')
@@ -286,6 +423,7 @@ def get_user():
         else:
             return jsonify({'error': 'User not found in database'}), 404
     return jsonify({'error': 'Not authenticated'}), 401
+
 
 # API endpoint to update user profile
 @app.route('/api/user/update', methods=['POST'])
@@ -319,30 +457,18 @@ def update_user():
         db.session.rollback()
         return jsonify({'error': 'Failed to update user'}), 500
 
+
 # Add error handlers
 @app.errorhandler(404)
 def not_found_error(error):
     return jsonify({'error': 'Route not found'}), 404
+
 
 @app.errorhandler(500)
 def internal_error(error):
     db.session.rollback()
     return jsonify({'error': 'Internal server error'}), 500
 
-
-# Optional: Add to cart functionality (if you have a cart system)
-@app.route('/add-to-cart/<int:product_id>')
-def add_to_cart(product_id):
-    """Add product to cart"""
-    product = Product.query.get_or_404(product_id)
-
-    if product.stock > 0:
-        # Add your cart logic here
-        flash(f'{product.name} added to cart!', 'success')
-    else:
-        flash(f'{product.name} is out of stock!', 'error')
-
-    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)

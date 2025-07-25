@@ -55,14 +55,6 @@ def update_order_status_db(order_id, status):
     # Implementation depends on your database
     pass
 
-def get_all_faqs():
-    # Implementation depends on your database
-    pass
-
-def create_faq(faq_data):
-    # Implementation depends on your database
-    pass
-
 def get_all_customers():
     # Implementation depends on your database
     pass

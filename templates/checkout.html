@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - YUVRASTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="container mt-4">
+        <div class="checkout-header">
+            <h2>Checkout</h2>
+            <a href="{{ url_for('cart.view_cart') }}" class="back-to-cart">
+                <i class="fas fa-arrow-left"></i> Back to Cart
+            </a>
+        </div>
+
+        <div class="checkout-container">
+            <div class="checkout-form">
+                <h3>Shipping Information</h3>
+                <form action="{{ url_for('place_order') }}" method="post" id="checkoutForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required
+                               value="{{ session.user.name if session.user else '' }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required
+                               value="{{ session.user.email if session.user else '' }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Shipping Address</label>
+                        <textarea id="address" name="address" required
+                                  class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" required
+                                   class="form-control">
+                        </div>
+                        <div class="form-group col">
+                            <label for="state">State</label>
+                            <input type="text" id="state" name="state" required
+                                   class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" id="zip" name="zip" required
+                               class="form-control">
+                    </div>
+
+                    <button type="submit" class="place-order-btn">
+                        Place Order
+                    </button>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                {% for item in cart_items %}
+                    <div class="summary-item">
+                        <div class="item-info">
+                            <img src="{{ item.product.image_url or url_for('static', filename='images/pro.png') }}"
+                                 alt="{{ item.product.name }}" class="item-thumbnail">
+                            <div class="item-details">
+                                <h4>{{ item.product.name }}</h4>
+                                <p>Quantity: {{ item.quantity }}</p>
+                            </div>
+                        </div>
+                        <div class="item-price">
+                            ₹{{ "%.2f"|format(item.subtotal) }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="summary-totals">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span>₹{{ "%.2f"|format(total) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .checkout-header {
+        display: flex;
+        margin-top: 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .back-to-cart {
+        color: #4CAF50;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .back-to-cart:hover {
+        color: #388E3C;
+    }
+
+    .checkout-container {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .checkout-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+    .place-order-btn {
+        width: 100%;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .place-order-btn:hover {
+        background: #388E3C;
+    }
+
+    .order-summary {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        height: fit-content;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .item-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .item-thumbnail {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .item-details h4 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .item-details p {
+        margin: 0.25rem 0 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .summary-totals {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .summary-row.total {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 992px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
+
+    <script>
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Here you would typically:
+        // 1. Validate the form
+        // 2. Send data to server
+        // 3. Handle payment processing
+        // 4. Show loading state
+        // 5. Redirect on success
+
+        alert('Order placement functionality will be implemented soon!');
+    });
+    </script>
+</body>
+</html>

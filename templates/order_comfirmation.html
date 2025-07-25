@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - YUVRASTRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="container mt-4">
+        <div class="confirmation-container">
+            <div class="confirmation-header">
+                <i class="fas fa-check-circle success-icon"></i>
+                <h2>Order Confirmed!</h2>
+                <p>Thank you for your order. We'll send you a confirmation email shortly.</p>
+            </div>
+
+            <div class="order-details">
+                <div class="order-info">
+                    <h3>Order Information</h3>
+                    <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at.strftime('%B %d, %Y') }}</p>
+                    <p><strong>Order Status:</strong> <span class="status-badge">{{ order.status.value }}</span></p>
+                </div>
+
+                <div class="shipping-info">
+                    <h3>Shipping Information</h3>
+                    <p><strong>Name:</strong> {{ order.customer_name }}</p>
+                    <p><strong>Email:</strong> {{ order.customer_email }}</p>
+                    <p><strong>Phone:</strong> {{ order.customer_phone }}</p>
+                    <p><strong>Address:</strong><br>
+                        {{ order.shipping_address }}<br>
+                        {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h3>Order Items</h3>
+                {% for item in order.order_items %}
+                    <div class="order-item">
+                        <div class="item-info">
+                            <h4>{{ item.product_name }}</h4>
+                            <p>Quantity: {{ item.quantity }}</p>
+                            <p>Price: ₹{{ "%.2f"|format(item.product_price) }}</p>
+                        </div>
+                        <div class="item-total">
+                            ₹{{ "%.2f"|format(item.subtotal) }}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="order-total">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span>₹{{ "%.2f"|format(order.total_amount) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total</span>
+                        <span>₹{{ "%.2f"|format(order.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                <a href="{{ url_for('home') }}" class="continue-shopping-btn">
+                    <i class="fas fa-arrow-left"></i> Continue Shopping
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="view-orders-btn">
+                    <i class="fas fa-list"></i> View Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .confirmation-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .confirmation-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        color: #4CAF50;
+        margin-bottom: 1rem;
+    }
+
+    .confirmation-header h2 {
+        margin: 0 0 0.5rem;
+        color: #2c3e50;
+    }
+
+    .confirmation-header p {
+        color: #666;
+        margin: 0;
+    }
+
+    .order-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .order-info h3,
+    .shipping-info h3 {
+        margin: 0 0 1rem;
+        color: #2c3e50;
+    }
+
+    .order-info p,
+    .shipping-info p {
+        margin: 0.5rem 0;
+        color: #666;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background: #4CAF50;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .order-items {
+        margin-bottom: 2rem;
+    }
+
+    .order-items h3 {
+        margin: 0 0 1rem;
+        color: #2c3e50;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .item-info h4 {
+        margin: 0 0 0.25rem;
+        color: #2c3e50;
+    }
+
+    .item-info p {
+        margin: 0.25rem 0;
+        color: #666;
+    }
+
+    .item-total {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .order-total {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+
+    .total-row.final {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #eee;
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1rem;
+    }
+
+    .confirmation-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .continue-shopping-btn,
+    .view-orders-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .continue-shopping-btn {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .view-orders-btn {
+        background: #f8f9fa;
+        color: #2c3e50;
+        border: 1px solid #dee2e6;
+    }
+
+    .continue-shopping-btn:hover {
+        background: #388E3C;
+    }
+
+    .view-orders-btn:hover {
+        background: #e9ecef;
+    }
+
+    @media (max-width: 768px) {
+        .order-details {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .confirmation-actions {
+            flex-direction: column;
+        }
+
+        .continue-shopping-btn,
+        .view-orders-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    </style>
+</body>
+</html>
